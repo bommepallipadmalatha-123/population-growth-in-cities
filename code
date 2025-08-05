@@ -1,0 +1,40 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeRegressor
+
+# ---------- Step 1: Load Data ----------
+df = pd.read_csv('data/city_population.csv')  # Ensure this file exists
+
+# ---------- Step 2: Prepare Data ----------
+X = df[['Year']]          # Input feature
+y = df['Population']      # Target value
+
+# ---------- Step 3: Train the Decision Tree Model ----------
+model = DecisionTreeRegressor()
+model.fit(X, y)
+
+# ---------- Step 4: Predict Future Years ----------
+future_years = pd.DataFrame({'Year': [2040, 2050, 2060]})
+future_predictions = model.predict(future_years)
+
+# ---------- Step 5: Print Predictions ----------
+print("\n🌳 Decision Tree Population Predictions:")
+for year, pop in zip(future_years['Year'], future_predictions):
+    print(f"  {year}: {pop:.2f} million")
+
+# ---------- Step 6: Plot Graph ----------
+plt.figure(figsize=(10, 6))
+plt.scatter(X, y, color='blue', label='Actual Data')
+plt.plot(X, model.predict(X), color='orange', label='Tree Prediction (Training)')
+plt.scatter(future_years, future_predictions, color='green', marker='x', s=100, label='Future Prediction')
+
+plt.title('Population Growth Prediction using Decision Tree')
+plt.xlabel('Year')
+plt.ylabel('Population (millions)')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+
+# ---------- Step 7: Save and Show Graph ----------
+plt.savefig('output/population_growth_tree.png')
+plt.show()
