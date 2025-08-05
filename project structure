@@ -1,0 +1,12 @@
+PopulationGrowth_Cities_Project/
+├── data/
+│   └── city_population.csv
+├── images/
+│   └── charts.png
+├── src/
+│   └── analysis.py
+├── report/
+│   └── final_report.pdf
+├── presentation/
+│   └── project_ppt.pptx
+└── README.md
