@@ -6,50 +6,62 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
-st.title("🌆 Population Growth Prediction in Cities")
-st.write("This app predicts future population growth for Indian cities using Linear Regression.")
+# Page setup
+st.set_page_config(page_title="State Population Growth", layout="centered")
+st.title("📈 Population Growth Prediction in Indian States")
 
-# Load dataset
+# All Indian States list (as of 2025)
+states = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+    'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
+    'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim',
+    'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand',
+    'West Bengal'
+]
+
+# Sample historical data (you should replace this with real data or load from CSV)
 @st.cache_data
 def load_data():
-    # Sample data - you should replace with a full dataset of Indian cities
-    data = {
-        'City': ['Mumbai'] * 5 + ['Delhi'] * 5 + ['Bangalore'] * 5,
-        'Year': [2000, 2005, 2010, 2015, 2020] * 3,
-        'Population': [11978450, 12442373, 12990000, 13500000, 14000000,
-                       11034555, 11500000, 12000000, 12500000, 13000000,
-                       6500000, 7000000, 7500000, 8000000, 8500000]
-    }
-    df = pd.DataFrame(data)
+    # Dummy population data (use actual population data in real project)
+    data = []
+    for state in states:
+        for year in [2000, 2005, 2010, 2015, 2020]:
+            population = np.random.randint(5_000_000, 120_000_000)  # Dummy values
+            data.append([state, year, population])
+    df = pd.DataFrame(data, columns=["State", "Year", "Population"])
     return df
 
 df = load_data()
 
-# Sidebar input
-city = st.sidebar.selectbox("Select a city", df['City'].unique())
-future_year = st.sidebar.slider("Select future year to predict", 2025, 2050, 2030)
+# Sidebar: state and future year selection
+st.sidebar.header("Choose Input")
+selected_state = st.sidebar.selectbox("Select a State", df["State"].unique())
+selected_year = st.sidebar.slider("Select Future Year to Predict", 2025, 2050, 2030)
 
-# Filter data
-city_data = df[df['City'] == city]
-X = city_data['Year'].values.reshape(-1, 1)
-y = city_data['Population'].values.reshape(-1, 1)
+# Filter for selected state
+state_data = df[df["State"] == selected_state]
+X = state_data["Year"].values.reshape(-1, 1)
+y = state_data["Population"].values.reshape(-1, 1)
 
-# Model
+# Train the model
 model = LinearRegression()
 model.fit(X, y)
-future_pred = model.predict(np.array([[future_year]]))[0][0]
 
-# Display prediction
-st.subheader(f"📈 Predicted population of {city} in {future_year}:")
-st.success(f"**{int(future_pred):,}** people")
+# Predict for selected year
+predicted_population = model.predict([[selected_year]])[0][0]
+
+# Display result
+st.subheader(f"📍 {selected_state} - Predicted Population in {selected_year}")
+st.success(f"Estimated population: **{int(predicted_population):,}** people")
 
 # Plot
-plt.figure(figsize=(10, 5))
-plt.scatter(X, y, color='blue', label="Historical Data")
-plt.plot(X, model.predict(X), color='green', label="Regression Line")
-plt.scatter(future_year, future_pred, color='red', label="Prediction")
-plt.xlabel("Year")
-plt.ylabel("Population")
-plt.title(f"Population Growth Prediction for {city}")
-plt.legend()
-st.pyplot(plt)
+fig, ax = plt.subplots()
+ax.scatter(X, y, color='blue', label='Historical')
+ax.plot(X, model.predict(X), color='green', label='Trend')
+ax.scatter(selected_year, predicted_population, color='red', label='Prediction')
+ax.set_xlabel("Year")
+ax.set_ylabel("Population")
+ax.set_title(f"Population Growth: {selected_state}")
+ax.legend()
+st.pyplot(fig)
