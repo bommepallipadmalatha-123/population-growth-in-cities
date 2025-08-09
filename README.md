@@ -1,8 +1,7 @@
  Predicting-population-growth-in-cities
-# Population-Prediction-System
 
 Application Link: https:// bommepallipadmalatha-population-prediction-system-population-app-x6rrby.streamlit.app/
-
+http://localhost:8502
 
 
 Skills Required: Python, ML, Streamlit, Pandas, Sklearn
