@@ -1,105 +1,78 @@
-
-# IMPORTING ALL THE LIBRARIES
-import pandas as pd 
+import streamlit as st
+import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
-import warnings
-warnings.filterwarnings("ignore")
-import streamlit as st
-import plotly.express as px
-import plotly.graph_objects as go
-from numerize import numerize 
-st. set_page_config(layout="wide")
+import matplotlib.pyplot as plt
 
-# IMPORT DATASETS
-countries_pop = pd.read_csv(r'datasets/Countries_Population_final.csv')
-countries_name= pd.read_csv(r'datasets/Countries_names.csv')
+# Page setup
+st.set_page_config(page_title="City Population Growth", layout="centered")
+st.title("📈 Population Growth Prediction in Indian Cities")
 
-# DASHBOARD TITLE
-col1, col2,col3 = st.columns([2,6,2])
-with col1:
-    pass
-with col2:
-    st.info('# :blue[POPULATION PREDICTION SYSTEM]')
-with col3:
-    pass
-#mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm ML MODEL: POLYNOMIAL REGRESSION mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-col1, col2 = st.columns(2)
-with col1:
-    # USER INPUTS FOR PREDECTION
-    option = st.selectbox(
-        'PLEASE SELECT ANY COUNTRY',
-        (sorted(countries_name['Country_Name'])))
-    year = st.text_input('PLEASE ENTER YEAR', '2030')
-    if year.isnumeric():        
-        # Divide Independent and Dependent features
-        X=countries_pop['Year'] # all the independent features are copied to X
-        y=countries_pop[option] # the dependent feature is copied to y
+# List of major Indian cities
+cities = [
+    "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad",
+    "Chennai", "Kolkata", "Surat", "Pune", "Jaipur",
+    "Lucknow", "Kanpur", "Nagpur", "Indore", "Thane",
+    "Bhopal", "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara"
+]
 
-        # Train Test splitting
-        from sklearn.model_selection import train_test_split
-        X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.30, random_state=42)
-        X_train = X_train.values.reshape(-1, 1)
-        X_test = X_test.values.reshape(-1, 1)
+# Load or generate dummy data
+@st.cache_data
+def load_data():
+    data = []
+    for city in cities:
+        for year in [2000, 2005, 2010, 2015, 2020]:
+            population = np.random.randint(1_000_000, 30_000_000)  # Smaller than states
+            data.append([city, year, population])
+    df = pd.DataFrame(data, columns=["City", "Year", "Population"])
+    return df
 
-        # SVR
-        from sklearn.preprocessing import PolynomialFeatures
-        from sklearn.metrics import r2_score
-        from sklearn.metrics import mean_squared_error
+df = load_data()
 
-        def create_polynomial_regression_model(degree,Yearin):             
-            poly_features = PolynomialFeatures(degree=degree)          
-            X_train_poly = poly_features.fit_transform(X_train) # transforms the existing features to higher degree features.
-                 
-            poly_model = LinearRegression() 
-            poly_model.fit(X_train_poly, Y_train)    # fit the transformed features to Linear Regression    
-            y_train_predicted = poly_model.predict(X_train_poly) # predicting on training data-set
-            y_test_predict = poly_model.predict(poly_features.fit_transform(X_test)) # predicting on test data-set
-            output = poly_model.predict(poly_features.fit_transform([[Yearin]]))           
-        
-            # rmse_train = np.sqrt(mean_squared_error(Y_train, y_train_predicted)) # evaluating the model on training dataset
-            # r2_train = r2_score(Y_train, y_train_predicted)        
-            # rmse_test = np.sqrt(mean_squared_error(Y_test, y_test_predict))  # evaluating the model on test dataset            
-            r2_test = r2_score(Y_test, y_test_predict)
-        
-            # #st.write("RMSE of training set is {}".format(rmse_train))
-            # st.write("TRAINING SET ACCURACY {}".format(r2_train))
-            # st.write("-------------------------------------------")
-            # #st.write("RMSE of test set is {}".format(rmse_test))
-            # st.write("TEST SET ACCURACY {}".format(r2_test))
-            # st.write("-------------------------------------------")
-            st.write("#### :green[ALGORITHM: ] POLYNOMIAL REGRESSION")
-            st.write('#### :green[ ACCURACY: ] '+str(int(r2_test*100))+'%')  
-            return output
+# Sidebar inputs
+st.sidebar.header("Choose Input")
+selected_city = st.sidebar.selectbox("Select a City", df["City"].unique())
+selected_year = st.sidebar.slider("Select Future Year to Predict", 2025, 2050, 2030)
 
-        pred= create_polynomial_regression_model(2,int(year))
+# Filter data for the selected city
+city_data = df[df["City"] == selected_city]
 
-        # OUTPUT DETAILS        
-        pred_pop = numerize.numerize(pred[0])
-        st.write("#### :green[COUNTRY:  ] "+option.upper())
-        st.write("#### :green[YEAR:  ] "+year)
-        st.write("#### :green[PREDICTED POPULATION:  ] "+pred_pop)
-    else:
-        st.write('PLEASE ENTER A VALID YEAR')
+# Prepare features and target
+X = city_data["Year"].values.reshape(-1, 1)
+y = city_data["Population"].values
 
-with col2:
-    if year.isnumeric():
-        st.write('#### :green['+option.upper()+"'S  POPULATION]")
-        fig1 = go.Figure()
-        # Create and style traces
-        fig1.add_trace(go.Scatter(x=countries_pop['Year'] , y=countries_pop[option], name = "Previous Year's",
-                                line=dict(color='green', width=11)
-                                ))
-        fig1.add_trace(go.Scatter(x=[year], y=[pred[0]], 
-                                name = 'Predicted '+year,
-                                mode = 'markers',
-                                marker_symbol = 'star',
-                                marker=dict(
-                                size=20, 
-                                color=np.random.randn(500), #set color equal to a variable
-                                colorscale='reds', # one of plotly colorscales                                
-                                )
-                                ))
-        st.plotly_chart(fig1)
-        st.write('The above plot shows the population of a country from 1960 to 2021, star represents the predicted population for the given year')
+@st.cache_data
+def train_model(X, y):
+    model = LinearRegression()
+    model.fit(X, y)
+    return model
 
+model = train_model(X, y)
+
+# Predict population for selected future year
+predicted_population = model.predict([[selected_year]])[0]
+predicted_population = max(predicted_population, 0)
+
+# Display prediction
+st.subheader(f"📍 {selected_city} - Predicted Population in {selected_year}")
+st.success(f"Estimated population: *{int(predicted_population):,}* people")
+
+# Plotting
+fig, ax = plt.subplots(figsize=(8,5))
+ax.scatter(X, y, color='blue', label='Historical Data')
+ax.plot(X, model.predict(X.reshape(-1,1)), color='green', label='Trend Line')
+ax.scatter(selected_year, predicted_population, color='red', label='Prediction')
+ax.set_xlabel("Year")
+ax.set_ylabel("Population")
+ax.set_title(f"Population Growth: {selected_city}")
+ax.legend()
+ax.grid(True)
+plt.xticks(list(X.flatten()) + [selected_year])
+ax.ticklabel_format(axis='y', style='plain')
+st.pyplot(fig)
+
+# Note about dummy data
+st.markdown(
+    "<small><i>Note: Population data shown is randomly generated dummy data for demo purposes only.</i></small>",
+    unsafe_allow_html=True
+)
