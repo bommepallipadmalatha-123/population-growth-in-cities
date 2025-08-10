@@ -3,7 +3,9 @@ Overview
 This project predicts future population growth for different cities using historical population data and statistical or machine learning models.
 It provides an interactive visualization of past trends and future projections, helping urban planners, policymakers, and researchers make informed decisions about infrastructure, housing, transportation, and resource allocation.
 
-Features
+Features:
+
+
 City Selection – Choose a city to view its population trend.
 
 Year Range Input – Predict population growth from a given start year to a target year.
