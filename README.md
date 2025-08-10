@@ -16,7 +16,9 @@ Model Options – Support for linear regression, polynomial regression, or other
 
 CSV Data Support – Import historical city-wise population data.
 
-Tech Stack
+Tech Stack:
+
+
 Python – Core programming language
 
 Streamlit – For building the interactive web app
@@ -28,7 +30,10 @@ NumPy – Numerical computations
 Matplotlib / Plotly – Data visualization
 
 Scikit-learn – Machine learning models for prediction
-Installation
+
+
+
+Installation:
 Clone the repository:
 
 git clone https://github.com/bommepallipadmalatha-123/population-growth-in-cities.git
