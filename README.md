@@ -1,18 +1,59 @@
- Predicting-population-growth-in-cities
+📈 Predicting Population Growth in Cities
+Overview
+This project predicts future population growth for different cities using historical population data and statistical or machine learning models.
+It provides an interactive visualization of past trends and future projections, helping urban planners, policymakers, and researchers make informed decisions about infrastructure, housing, transportation, and resource allocation.
 
-Application Link: https:// bommepallipadmalatha-population-prediction-system-population-app-x6rrby.streamlit.app/
-http://localhost:8502
+Features
+City Selection – Choose a city to view its population trend.
 
+Year Range Input – Predict population growth from a given start year to a target year.
 
-Skills Required: Python, ML, Streamlit, Pandas, Sklearn
+Interactive Graphs – Visualize historical and predicted data using line charts.
 
-This code is a population prediction system that uses polynomial regression to predict the population of a selected country for a given year. The code imports two datasets: "Countries_Population_final.csv" which contains the population data of various countries from 1960 to 2021, and "Countries_names.csv" which contains the names of the countries.
+Model Options – Support for linear regression, polynomial regression, or other forecasting models.
 
-The code uses Streamlit to create a dashboard interface where the user selects a country and enters a year. If the year entered is numeric, the code trains a polynomial regression model using the population data of the selected country from 1960 to 2021. The model is then used to predict the population of the selected country for the given year. The predicted population and the accuracy of the model (R2 score) are displayed on the dashboard.
+CSV Data Support – Import historical city-wise population data.
 
-The predicted population and the previous year's population data are also plotted using Plotly. The predicted population for the given year is represented by a star on the plot.
+Tech Stack
+Python – Core programming language
 
-The code requires the following libraries to be installed: pandas, numpy, scikit-learn, streamlit, plotly, and numerize.
+Streamlit – For building the interactive web app
 
+Pandas – Data handling
 
+NumPy – Numerical computations
 
+Matplotlib / Plotly – Data visualization
+
+Scikit-learn – Machine learning models for prediction
+
+Installation
+Clone the repository:
+
+bash
+Copy
+Edit
+git clone https://github.com/yourusername/population-growth-prediction.git
+cd population-growth-prediction
+Install dependencies:
+
+bash
+Copy
+Edit
+pip install -r requirements.txt
+Run the application:
+
+bash
+Copy
+Edit
+streamlit run app.py
+How It Works
+Load historical population data for cities (CSV file).
+
+Choose a model (e.g., Linear Regression).
+
+Fit the model to the historical data.
+
+Predict population for future years.
+
+Display both historical and predicted trends in a graph.
