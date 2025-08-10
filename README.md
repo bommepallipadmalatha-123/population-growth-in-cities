@@ -26,34 +26,12 @@ NumPy – Numerical computations
 Matplotlib / Plotly – Data visualization
 
 Scikit-learn – Machine learning models for prediction
-
 Installation
 Clone the repository:
 
-bash
-Copy
-Edit
 git clone https://github.com/yourusername/population-growth-prediction.git
 cd population-growth-prediction
 Install dependencies:
-
-bash
-Copy
-Edit
 pip install -r requirements.txt
 Run the application:
-
-bash
-Copy
-Edit
 streamlit run app.py
-How It Works
-Load historical population data for cities (CSV file).
-
-Choose a model (e.g., Linear Regression).
-
-Fit the model to the historical data.
-
-Predict population for future years.
-
-Display both historical and predicted trends in a graph.
