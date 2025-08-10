@@ -1,3 +1,4 @@
+Application Link:https://population-growth-in-cities-ffixvj3ivy53j9ey2mdh2u.streamlit.app/
 📈 Predicting Population Growth in Cities
 Overview
 This project predicts future population growth for different cities using historical population data and statistical or machine learning models.
